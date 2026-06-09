@@ -79,33 +79,51 @@ def run_massif_sweep(model, tokenizer, prompt, n_runs=50, max_tokens=30,
         'flip_times': all_flip_times,
     }
     
-def run_checkpoint_massif_eval(model, config, step, tokenizer=None, device='cuda'):
+def run_checkpoint_massif_eval(model, config, step, tokenizer, device='cuda'):
     """
     Run full MASSIF evaluation at a checkpoint.
     """
-    if tokenizer is None:
-        print(f"⚠️ No tokenizer provided for MASSIF sweep at step {step}")
-        return None
+    print(f"\n{'='*60}")
+    print(f"📊 MASSIF CHECKPOINT EVALUATION - STEP {step}")
+    print(f"{'='*60}")
     
-    print(f"\n{'='*50}")
-    print(f"📊 MASSIF SWEEP AT STEP {step}")
-    print(f"{'='*50}")
+    # Use smaller N for checkpoint speed (can adjust)
+    n_runs = 30
+    max_tokens = 20
     
-    # Use smaller N for checkpoint evaluation (faster)
     results = run_massif_sweep(
         model=model,
         tokenizer=tokenizer,
         prompt="I " * 4,
-        n_runs=30,           # Reduced from 50 for checkpoint speed
-        max_tokens=20,       # Reduced from 30
+        n_runs=n_runs,
+        max_tokens=max_tokens,
         temperature=0.5,
         device=device
     )
     
-    print(f"   Flip rate: {results['flip_rate']:.1%}")
+    print(f"   Flip rate: {results['flip_rate']:.1%} ({results['flip_rate']*n_runs:.0f}/{n_runs})")
     print(f"   Delta_t: {results['delta_t']:.1f}")
-    print(f"   τ_eff: {results['tau_eff']:.1f}")
-    print(f"   Mean curvature: {results['mean_kappa']:.4f}")
-    print(f"   CV: {results['mean_cv']:.4f}")
+    print(f"   τ_eff: {results['tau_eff']:.1f} steps")
+    print(f"   Mean curvature (κ̄): {results['mean_kappa']:.4f} rad")
+    print(f"   Radial variance CV: {results['mean_cv']:.4f}")
+    print(f"   Max norm: {results['max_norm']:.2f}")
+    
+    # Classify
+    if results['max_norm'] > 200:
+        if results['delta_t'] is not None and results['delta_t'] < -2:
+            dyn_class = "Accelerator (Runaway-norm)"
+        else:
+            dyn_class = "Runaway"
+    elif results['delta_t'] is None:
+        dyn_class = "Unknown"
+    elif results['delta_t'] < -2:
+        dyn_class = "Accelerator"
+    elif results['delta_t'] > 2:
+        dyn_class = "Decelerator"
+    else:
+        dyn_class = "Neutral"
+    
+    print(f"   Dynamical class: {dyn_class}")
+    print(f"{'='*60}\n")
     
     return results    
