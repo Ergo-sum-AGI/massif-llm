@@ -73,12 +73,13 @@ massif-llm/ (crossed where populated)
 │   │                                     #   R_t, curvature, radial variance, lead-lag
 │ x ├── losses.py                         # MASSIFRegularizer + config dataclasses
 │ x ├── telemetry.py                      # Forward hooks for any model layer
-│   └── taxonomy.py                       # classify_model(): metric dict -> class label
+│ x └── taxonomy.py                       # classify_model(): metric dict -> class label
 │
 ├── training/
 │ x ├── train.py                          # Main loop: LM loss + MASSIFRegularizer
 │ x ├── data.py                           # FineWeb-Edu / TinyStories dataloaders
-│   └── scheduler.py                      # CosineAnnealingLR + warmup
+│ x ├── scheduler.py                      # CosineAnnealingLR + warmup
+│ x └── tinystories.py                    # TinyStories loader (for skeleton validation)
 │
 ├── experiments/
 │ x ├── massif_sweep.py                   # run_massif_sweep(): N=50 protocol
