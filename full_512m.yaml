@@ -1,0 +1,31 @@
+# configs/full_512m.yaml
+# architecture params
+d_model: 1024
+n_layers: 24
+n_heads: 16
+vocab_size: 32000
+max_seq_len: 1024
+track_norms: true
+
+massif_regularization:
+  enabled: true                    # master switch
+  warmup_steps: 1000               # steps before any reg loss activates
+
+  persistence:
+    enabled: true
+    lambda: 0.01
+    threshold: 0.3                 # penalize persistence above this value
+    schedule: linear               # ramp from 0 to lambda over 10K steps
+
+  norm_stability:
+    enabled: true
+    lambda: 0.005
+    std_weight: 1.0
+    growth_weight: 0.5
+    schedule: constant
+
+  curvature:
+    enabled: true
+    lambda: 0.01
+    target_kappa: 1.5              # target curvature in radians (~86 degrees)
+    schedule: constant
