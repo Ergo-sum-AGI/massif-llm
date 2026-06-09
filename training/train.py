@@ -90,7 +90,8 @@ def train(config_path, dataloader, device='cuda'):
         # Logging
         if step % 100 == 0:
             print(f"Step {step} | LM: {lm_loss:.4f} | Reg: {reg_loss:.4f}")
-        
+        if step % 5000 == 0 and step > 0:
+            run_checkpoint_massif_eval(model, config, step, tokenizer=tokenizer, device=device)
         step += 1
         if step >= total_steps:
             break
