@@ -72,7 +72,7 @@ massif-llm/ (crossed where populated)
 │ x ├── observables.py                    # Pure functions: persistence, flip detection,
 │   │                                     #   R_t, curvature, radial variance, lead-lag
 │ x ├── losses.py                         # MASSIFRegularizer + config dataclasses
-│ x ├── telemetry.py                      # Forward hooks for any model layer
+│   ├── telemetry.py                      # Forward hooks for any model layer
 │ x └── taxonomy.py                       # classify_model(): metric dict -> class label
 │
 ├── training/
