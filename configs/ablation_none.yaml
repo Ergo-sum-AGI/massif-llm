@@ -1,0 +1,31 @@
+# configs/ablation_none.yaml
+massif_regularization:
+  enabled: false
+
+# configs/ablation_persist_only.yaml
+massif_regularization:
+  enabled: true
+  persistence: {enabled: true, lambda: 0.01}
+  norm_stability: {enabled: false, lambda: 0.0}
+  curvature: {enabled: false, lambda: 0.0}
+
+# configs/ablation_norm_only.yaml
+massif_regularization:
+  enabled: true
+  persistence: {enabled: false, lambda: 0.0}
+  norm_stability: {enabled: true, lambda: 0.005}
+  curvature: {enabled: false, lambda: 0.0}
+
+# configs/ablation_kappa_only.yaml
+massif_regularization:
+  enabled: true
+  persistence: {enabled: false, lambda: 0.0}
+  norm_stability: {enabled: false, lambda: 0.0}
+  curvature: {enabled: true, lambda: 0.01}
+
+# configs/ablation_full.yaml
+massif_regularization:
+  enabled: true
+  persistence: {enabled: true, lambda: 0.01}
+  norm_stability: {enabled: true, lambda: 0.005}
+  curvature: {enabled: true, lambda: 0.01}
