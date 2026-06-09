@@ -215,13 +215,17 @@ def run_checkpoint_massif_eval(model, config: MASSIFConfig, step: int,
         print(f"MASSIF CHECKPOINT EVAL — Step {step}")
         print(f"{'='*60}")
 
-        # Use tokenizer if available, else encode prompt as raw token ids
         prompt = config.massif_prompt
-        if tokenizer is not None:
-            prompt_ids = tokenizer.encode(prompt, return_tensors='pt').to(device)
-        else:
-            # Fallback: encode "I " as token id 40 in GPT-2 vocab (approximate)
-            prompt_ids = torch.tensor([[40, 40, 40, 40]], device=device)
+
+        metrics = run_massif_sweep(
+            model=model,
+            tokenizer=tokenizer,
+            prompt=prompt,
+            n_runs=10,                          # fast checkpoint sweep
+            max_tokens=config.massif_max_tokens,
+            temperature=config.massif_temperature,
+            device=device,
+        )
 
         metrics = run_massif_sweep(
             model=model,
