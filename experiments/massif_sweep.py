@@ -78,3 +78,34 @@ def run_massif_sweep(model, tokenizer, prompt, n_runs=50, max_tokens=30,
         'R_t': R_t.numpy(),
         'flip_times': all_flip_times,
     }
+    
+def run_checkpoint_massif_eval(model, config, step, tokenizer=None, device='cuda'):
+    """
+    Run full MASSIF evaluation at a checkpoint.
+    """
+    if tokenizer is None:
+        print(f"⚠️ No tokenizer provided for MASSIF sweep at step {step}")
+        return None
+    
+    print(f"\n{'='*50}")
+    print(f"📊 MASSIF SWEEP AT STEP {step}")
+    print(f"{'='*50}")
+    
+    # Use smaller N for checkpoint evaluation (faster)
+    results = run_massif_sweep(
+        model=model,
+        tokenizer=tokenizer,
+        prompt="I " * 4,
+        n_runs=30,           # Reduced from 50 for checkpoint speed
+        max_tokens=20,       # Reduced from 30
+        temperature=0.5,
+        device=device
+    )
+    
+    print(f"   Flip rate: {results['flip_rate']:.1%}")
+    print(f"   Delta_t: {results['delta_t']:.1f}")
+    print(f"   τ_eff: {results['tau_eff']:.1f}")
+    print(f"   Mean curvature: {results['mean_kappa']:.4f}")
+    print(f"   CV: {results['mean_cv']:.4f}")
+    
+    return results    
