@@ -36,7 +36,13 @@ def load_config_dict(config_path: str) -> dict:
 
 
 def build_massif_config(config_dict: dict) -> MASSIFConfig:
-    """Build MASSIFConfig from a flat or nested yaml dict."""
+    """Build MASSIFConfig from a nested yaml dict structure."""
+    # Extract nested blocks safely
+    massif_reg = config_dict.get('massif_regularization', {})
+    persist = massif_reg.get('persistence', {})
+    norm_stab = massif_reg.get('norm_stability', {})
+    curvature = massif_reg.get('curvature', {})
+
     return MASSIFConfig(
         d_model=config_dict.get('d_model', 512),
         n_layers=config_dict.get('n_layers', 12),
@@ -50,16 +56,22 @@ def build_massif_config(config_dict: dict) -> MASSIFConfig:
         weight_decay=config_dict.get('weight_decay', 0.1),
         batch_size=config_dict.get('batch_size', 16),
         grad_clip=config_dict.get('grad_clip', 1.0),
-        massif_reg_enabled=config_dict.get('massif_reg_enabled', True),
-        massif_warmup_steps=config_dict.get('massif_warmup_steps', 1_000),
-        persist_enabled=config_dict.get('persist_enabled', True),
-        persist_lambda=config_dict.get('persist_lambda', 0.01),
-        persist_threshold=config_dict.get('persist_threshold', 0.3),
-        norm_stab_enabled=config_dict.get('norm_stab_enabled', True),
-        norm_stab_lambda=config_dict.get('norm_stab_lambda', 0.005),
-        kappa_enabled=config_dict.get('kappa_enabled', True),
-        kappa_lambda=config_dict.get('kappa_lambda', 0.01),
-        kappa_target=config_dict.get('kappa_target', 1.5),
+        
+        # Fixed: Reading from nested structure
+        massif_reg_enabled=massif_reg.get('enabled', True),
+        massif_warmup_steps=massif_reg.get('warmup_steps', 1_000),
+        
+        persist_enabled=persist.get('enabled', True),
+        persist_lambda=persist.get('lambda', 0.01),
+        persist_threshold=persist.get('threshold', 0.3),
+        
+        norm_stab_enabled=norm_stab.get('enabled', True),
+        norm_stab_lambda=norm_stab.get('lambda', 0.005),
+        
+        kappa_enabled=curvature.get('enabled', True),
+        kappa_lambda=curvature.get('lambda', 0.01),
+        kappa_target=curvature.get('target_kappa', 1.5),  # Matches 'target_kappa' in full_512m.yaml
+        
         massif_eval_every=config_dict.get('massif_eval_every', 5_000),
         massif_n_runs=config_dict.get('massif_n_runs', 50),
         massif_prompt=config_dict.get('massif_prompt', 'I ' * 4),
