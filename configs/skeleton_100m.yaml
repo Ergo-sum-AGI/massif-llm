@@ -6,3 +6,5 @@ vocab_size: 32000
 max_seq_len: 512
 track_norms: true
 target_params: ~85M
+checkpoint_every: 500
+checkpoint_dir: /content/drive/MyDrive/massif_models
