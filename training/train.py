@@ -25,8 +25,7 @@ def create_model(config_dict):
         track_norms=config_dict.get('track_norms', True),
     )
     return MASSIFModel(arch_config)
-
-def train(config_path, dataloader, device='cuda'):
+def train(config_path, dataloader, tokenizer, device='cuda'):
     """Main training loop."""
     # Load config
     config_dict = load_config(config_path)
