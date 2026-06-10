@@ -2,7 +2,7 @@
 def classify_model(metrics):
     """Classify model based on MASSIF metrics dict."""
     delta_t = metrics.get('delta_t')
-    v_peak = metrics.get('v_peak', 1.0)
+    v_peak = metrics.get('V_peak', 1.0)
     max_norm = metrics.get('max_norm', 0)
 
     if max_norm > 200:
